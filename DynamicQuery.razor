@@ -1,0 +1,107 @@
+﻿@using DynamicQueryModel.Model
+@using System.ComponentModel.DataAnnotations
+@using System.Reflection
+@using System.ComponentModel
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+@using Microsoft.JSInterop
+@typeparam TItem
+
+<div class="col-12">
+    <div class="col-12 d-flex flex-wrap">
+        @foreach (var i in QueryModelList)
+        {
+            <div class="card col-12">
+                <div class="card-title">
+                    <div class="col-12 d-flex ">
+                        <select class="form-select select-logic" @bind="@i.OutsideLogic">
+                            @foreach (var logic in Enum.GetValues(typeof(OutsideLogic)))
+                            {
+                                <option value="@logic">@(GetDescription<OutsideLogic>(logic))</option>
+                            }
+                        </select>
+                        <div class="flex-grow-1">
+                            @foreach (var k in i.QueryData)
+                            {
+                                <span class="span-ridius-bg"> @(k.InsideLogic==InsideLogic.And?"且":"或") </span><span class="span-ridius-bg">@GetDisplayName(typeof(TItem).GetProperty(k.Key)) @(GetDescription<InsideAction>(k.FilterAction)) &nbsp;@k.Value @k.LeftValue - @k.RightValue</span>
+                            }
+                        </div>
+                        <i class="fa fa-plus-square-o icon-right-center-l" aria-hidden="true" @onclick="AddOutsideLogic"></i>
+                        @if (i.Index != 0)
+                        {
+                            <i class="fa fa-minus-square-o icon-right-center-l" aria-hidden="true" @onclick="() => DeleteOutsideLogic(i)"></i>
+                        }
+                        @if (i.Index==0)
+                        {
+                            <div class="btn-group">
+                                <button class="btn btn-primary" @onclick="Onclick">确定</button>
+                                <button class="btn btn-secondary" @onclick="Reset">重置</button>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="col-12 d-flex flex-wrap">
+                        @foreach (var j in i.QueryData)
+                        {
+                            <div class="col-llg-@((j.FilterAction==InsideAction.Between)?8:4) col-xl-6 col-12" style="padding: 2px">
+                                <div class="col-12 form-inline d-flex">
+                                    <select class="form-select select-logic" @bind="@j.InsideLogic">
+                                        @foreach (var logic in Enum.GetValues(typeof(InsideLogic)))
+                                        {
+                                            <option value="@logic">@(GetDescription<InsideLogic>(logic))</option>
+                                        }
+                                    </select>
+                                    <select class="form-select" @bind="@j.Key">
+                                        @foreach (var key in typeof(TItem).GetProperties())
+                                        {
+                                            @if (key.GetCustomAttribute<DisplayAttribute>() != null)
+                                            {
+                                                <option value="@key.Name">@GetDisplayName(key)</option>
+                                            }
+                                        }
+                                    </select>
+                                    <select class="form-select" @bind="@j.FilterAction">
+                                        @foreach (var action in Enum.GetValues(typeof(InsideAction)))
+                                        {
+                                            <option value="@action">@(GetDescription<InsideAction>(action))</option>
+                                        }
+                                    </select>
+                                    @if (j.FilterAction != InsideAction.Between)
+                                    {
+
+                                        @if (PropertyTypeIsGenericType<DateTime>(j.Key))
+                                        {
+                                            <input class="form-control" type="datetime-local" value="@j.Value" @onchange="(e) => OnValueChanged(e, j)" />
+                                        }
+                                        else
+                                        {
+                                            <input class="form-control" value="@j.Value" @onchange="(e) => OnValueChanged(e, j)" />
+                                        }
+                                    }
+                                    else
+                                    {
+
+                                        @if (PropertyTypeIsGenericType<DateTime>(j.Key))
+                                        {
+                                            <input class="form-control" type="datetime-local" value="@j.LeftValue" @onchange="(e) => OnLeftValueChanged(e, j)" />
+                                            <span class="span-text-custom">&lt;</span>
+                                            <input class="form-control" type="datetime-local" value="@j.RightValue" @onchange="(e) => OnRightValueChanged(e, j)" />
+                                        }
+                                        else
+                                        {
+                                            <input class="form-control" value="@j.LeftValue" @onchange="(e) => OnLeftValueChanged(e, j)" />
+                                            <span class="span-text-custom">&lt;</span>
+                                            <input class="form-control" value="@j.RightValue" @onchange="(e) => OnRightValueChanged(e, j)" />
+                                        }
+                                    }
+                                    <i class="fa fa-plus-square-o icon-right-center" aria-hidden="true" @onclick="() => AddInsideLogic(i)" title="增加条件"></i>
+                                    <i class="fa fa-minus-square-o icon-right-center" aria-hidden="true" @onclick="() => DeleteInsideLogic(i, j)" title="删除条件"></i>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

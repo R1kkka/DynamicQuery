@@ -1,0 +1,59 @@
+﻿body {
+}
+
+select {
+    max-width: 6rem;
+    width: auto;
+}
+
+.select-logic {
+    max-width: 4rem
+}
+
+input {
+    width: 100%
+}
+.icon-right-center {
+    float: right;
+    font-size: 1.5rem;
+    line-height: 1.5
+}
+
+.icon-right-center-l {
+    float: right;
+    font-size: 1.8rem;
+    line-height: 1.5
+}
+
+.fa-plus-square-o:hover {
+    text-shadow: 1px 1px 1px #23ce12;
+}
+
+.fa-minus-square-o:hover {
+    text-shadow: 1px 1px 1px #ef2a50;
+}
+
+.icon-left-center {
+    float: left;
+    font-size: 1.5rem;
+    line-height: 1.5
+}
+.span-ridius-bg {
+    background: aqua;
+    border-radius: 5px;
+    margin-left: 2px
+}
+
+.span-text-custom {
+    font-size: 1.5rem;
+    line-height: 1.5
+}
+
+@media screen and (min-width:1440px) {
+    .col-llg-4 {
+        width: 33.3%
+    }
+    .col-llg-8 {
+        width: 66.6%
+    }
+}
